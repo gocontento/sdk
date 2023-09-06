@@ -1,0 +1,11 @@
+{
+  "name": "@contento-sdk/next",
+  "version": "0.0.1",
+  "dependencies": {
+    "next": "^13.4.19",
+    "react": "^18.2.0"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
+}
