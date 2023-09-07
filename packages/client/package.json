@@ -1,6 +1,11 @@
 {
   "name": "@gocontento/client",
   "version": "0.0.1",
+  "description": "Javascript client for Contento.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gocontento/sdk/tree/main/packages/client"
+  },
   "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",
