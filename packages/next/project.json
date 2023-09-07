@@ -1,5 +1,5 @@
 {
-  "name": "next",
+  "name": "@gocontento/next",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/next/src",
   "projectType": "library",

@@ -1,4 +1,4 @@
-import { ContentoClient } from '@contento/client';
+import { ContentoClient } from '@client';
 import { cookies, draftMode } from 'next/headers';
 import { redirect } from 'next/navigation';
 

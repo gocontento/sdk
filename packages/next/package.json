@@ -1,5 +1,5 @@
 {
-  "name": "@contento-sdk/next",
+  "name": "@gocontento/next",
   "version": "0.0.1",
   "dependencies": {
     "next": "^13.4.19",

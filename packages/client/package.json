@@ -1,5 +1,5 @@
 {
-  "name": "@contento-sdk/client",
+  "name": "@gocontento/client",
   "version": "0.0.1",
   "dependencies": {},
   "main": "./index.js",

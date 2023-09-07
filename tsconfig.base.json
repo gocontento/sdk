@@ -15,8 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@contento/client": ["packages/client/src/index.ts"],
-      "@contento/next": ["packages/next/src/index.ts"]
+      "@client": ["packages/client/src/index.ts"],
+      "@next": ["packages/next/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
