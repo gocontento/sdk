@@ -1,5 +1,5 @@
 {
-  "name": "@gocontento/client",
+  "name": "client",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "client/src",
   "projectType": "library",

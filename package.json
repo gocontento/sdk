@@ -2,10 +2,23 @@
   "name": "@gocontento/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "build-on-change": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
+    "build-all": "nx run-many -t build",
+    "publish:client:patch": "cd dist/client && npm version patch && npm publish --access public",
+    "publish:client:minor": "cd dist/client && npm version minor && npm publish --access public",
+    "publish:client:major": "cd dist/client && npm version major && npm publish --access public",
+    "publish:next:patch": "cd dist/next && npm version patch && npm publish --access public",
+    "publish:next:minor": "cd dist/next && npm version minor && npm publish --access public",
+    "publish:next:major": "cd dist/next && npm version major && npm publish --access public"
+  },
+  "dependencies": {
+    "next": "^13.4.19",
+    "react": "^18.2.0"
+  },
   "devDependencies": {
     "@jscutlery/semver": "^3.1.0",
     "@nx/eslint-plugin": "16.7.4",
