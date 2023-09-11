@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 export default function usePreviewBridge(
     draftMode: boolean,
-    router: AppRouterInstance
+    router: AppRouterInstance | any
 ) {
     if (typeof window === 'undefined' || !draftMode) {
         return;
