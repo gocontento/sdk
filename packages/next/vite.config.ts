@@ -4,7 +4,6 @@ import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
-import react from '@vitejs/plugin-react';
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 
 export default defineConfig({
@@ -16,9 +15,7 @@ export default defineConfig({
             tsConfigFilePath: path.join(__dirname, 'tsconfig.lib.json'),
             skipDiagnostics: true,
         }),
-
         nxViteTsPaths(),
-        react(),
         preserveDirectives(),
     ],
 
@@ -34,23 +31,52 @@ export default defineConfig({
             // Could also be a dictionary or array of multiple entry points.
             entry: 'src/index.ts',
             name: 'next',
-            fileName: 'index',
+            fileName: (format, entry) => {
+                const name = entry.split('/').pop();
+                switch (format) {
+                    case 'es': {
+                        return `${name}.js`;
+                    }
+
+                    case 'cjs': {
+                        return `${name}.cjs`;
+                    }
+                }
+
+                throw new Error(`Unsupported format: ${format}`);
+            },
+            // fileName: (format, entry) => {
+            //     console.log('entry', entry);
+            //     switch (format) {
+            //         case 'es': {
+            //             return '[name].js';
+            //         }
+            //
+            //         case 'cjs': {
+            //             return '[name].cjs';
+            //         }
+            //     }
+            //
+            //     throw new Error(`Unsupported format: ${format}`);
+            // },
             // Change this to the formats you want to support.
             // Don't forget to update your package.json as well.
             formats: ['es', 'cjs'],
         },
         rollupOptions: {
             // External packages that should not be bundled into your library.
-            external: ['react', 'next'],
+            external: [
+                'react',
+                'next',
+                // exclude sub packages too eg. next/headers
+                /^next\//,
+                /^react\//,
+            ],
+            output: {
+                preserveModules: true,
+                inlineDynamicImports: false,
+                globals: { react: 'React', next: 'Next' },
+            },
         },
-    },
-
-    test: {
-        globals: true,
-        cache: {
-            dir: '../../node_modules/.vitest',
-        },
-        environment: 'node',
-        include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     },
 });
