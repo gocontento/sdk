@@ -1,8 +1,11 @@
+import { ContentApiData } from './api-types';
+import { Response } from 'next/dist/compiled/@edge-runtime/primitives';
+
 interface ContentoClientConfig {
     apiKey: string;
     apiURL: string;
     siteId: string;
-    previewSecret: string;
+    isPreview: Boolean;
 }
 
 export interface ContentoClient {
@@ -14,25 +17,50 @@ export interface ContentoClient {
 function ContentoClient({
     baseUrl,
     headers,
-    previewSecret,
 }: {
     baseUrl: String;
     headers: Headers;
-    previewSecret: string;
 }): ContentoClient {
     interface GetContentArgs {
         params: URLSearchParams;
     }
-    async function getContent({ params }: GetContentArgs) {
-        const response = await fetch(`${baseUrl}/content?${params}`, {
-            method: 'GET',
-            headers,
-        });
+
+    type ContentAPIResponse = ContentApiData[];
+    async function getContent({
+        params,
+    }: GetContentArgs): Promise<ContentAPIResponse> {
+        let response: Response;
+        try {
+            response = await fetch(`${baseUrl}/content?${params}`, {
+                method: 'GET',
+                headers,
+            });
+        } catch {
+            throw new Error(`Fetch failed`);
+        }
+
+        if (!response.ok) {
+            switch (response.status) {
+                case 401:
+                    throw new Error('Unauthorized');
+                case 404:
+                    throw new Error('Not found');
+                case 429:
+                    throw new Error('Too many requests');
+                case 500:
+                    throw new Error('Internal server error');
+            }
+        }
+
         const json = await response.json();
+
+        // the content endpoint can return an array (in form json.data) if more than one item returned, or single object (just json)
+        // if the request return only one item.
+        // We will normalise this to always return an array
         if (json.data) {
             return json.data;
         }
-        return json;
+        return [json];
     }
 
     async function getContentBySlug(slug: string, draft = false) {
@@ -40,34 +68,15 @@ function ContentoClient({
             slug,
             limit: '1',
         });
-        // if(draft) {
-        //   params['draft'] = draft;
-        params.append('draft', 'true');
-        // }
-        // const { data } = await axios('/content', {
-        //   method: 'GET',
-        //   params,
-        // });
 
-        // const response = await fetch(baseUrl + '/content?' + params, {});
-        // return data.data[0];
+        const [post] = await getContent({ params });
 
-        return getContent({ params });
+        return post;
     }
 
     async function getContentByType(contentType: string, draft = false) {
-        // const { data: responseData } = await axios('/content', {
-        //     method: 'GET',
-        //     params: {
-        //         content_type: contentType,
-        //         draft: draft,
-        //     },
-        // });
-        //
-        // return responseData.data;
         const params = new URLSearchParams({
             content_type: contentType,
-            draft: draft ? 'true' : 'false',
         });
         return getContent({ params });
     }
@@ -87,23 +96,14 @@ function ContentoClient({
 //test comment
 
 export function createContentoClient(contentoConfig: ContentoClientConfig) {
-    console.log('createContentoClient XXX');
-    // const axiosInstance = axios.create({
-    //   baseURL: contentoConfig.apiURL,
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: 'Bearer ' + contentoConfig.apiKey,
-    //     'X-CONTENTO-SITE': contentoConfig.siteId,
-    //   },
-    // });
     const headers = new Headers({
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + contentoConfig.apiKey,
         'X-CONTENTO-SITE': contentoConfig.siteId,
+        'X-CONTENTO-PREVIEW': contentoConfig.isPreview.toString(),
     });
     return ContentoClient({
         baseUrl: contentoConfig.apiURL,
         headers,
-        previewSecret: contentoConfig.previewSecret,
     });
 }
