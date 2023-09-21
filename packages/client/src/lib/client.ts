@@ -8,7 +8,12 @@ interface ContentoClientConfig {
     isPreview: Boolean;
 }
 
+interface GetContentArgs {
+    params: URLSearchParams;
+}
+
 export interface ContentoClient {
+    getContent: (args: GetContentArgs) => Promise<any>;
     getContentBySlug: (slug: string, draft?: boolean) => Promise<any>;
     getContentByType: (contentType: string, draft?: boolean) => Promise<any>;
     getPathsForType: (contentType: string, draft?: boolean) => Promise<any>;
@@ -21,10 +26,6 @@ function ContentoClient({
     baseUrl: String;
     headers: Headers;
 }): ContentoClient {
-    interface GetContentArgs {
-        params: URLSearchParams;
-    }
-
     type ContentAPIResponse = ContentApiData[];
     async function getContent({
         params,
@@ -87,6 +88,7 @@ function ContentoClient({
     }
 
     return {
+        getContent,
         getContentBySlug,
         getContentByType,
         getPathsForType,
