@@ -27,6 +27,7 @@ export default defineConfig({
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
         sourcemap: true,
+        minify: false,
         lib: {
             // Could also be a dictionary or array of multiple entry points.
             entry: 'src/index.ts',

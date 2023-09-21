@@ -31,5 +31,5 @@ export async function enableDraftAndRedirect(
 
     // Redirect to the path from the fetched post
     // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
-    redirect(`/posts/${post.slug}`);
+    redirect(`/${post.uri}`);
 }

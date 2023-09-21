@@ -1,5 +1,4 @@
 import { ContentApiData } from './api-types';
-import { Response } from 'next/dist/compiled/@edge-runtime/primitives';
 
 interface ContentoClientConfig {
     apiKey: string;
@@ -27,41 +26,62 @@ function ContentoClient({
     headers: Headers;
 }): ContentoClient {
     type ContentAPIResponse = ContentApiData[];
-    async function getContent({
-        params,
-    }: GetContentArgs): Promise<ContentAPIResponse> {
-        let response: Response;
+
+    async function get(url: string) {
         try {
-            response = await fetch(`${baseUrl}/content?${params}`, {
+            const response = await fetch(url, {
                 method: 'GET',
                 headers,
             });
+
+            if (!response.ok) {
+                switch (response.status) {
+                    case 401:
+                        throw new Error('Unauthorized');
+                    case 404:
+                        throw new Error('Not found');
+                    case 429:
+                        throw new Error('Too many requests');
+                    case 500:
+                        throw new Error('Internal server error');
+                }
+            }
+
+            return response.json();
         } catch {
             throw new Error(`Fetch failed`);
         }
+    }
 
-        if (!response.ok) {
-            switch (response.status) {
-                case 401:
-                    throw new Error('Unauthorized');
-                case 404:
-                    throw new Error('Not found');
-                case 429:
-                    throw new Error('Too many requests');
-                case 500:
-                    throw new Error('Internal server error');
-            }
-        }
-
-        const json = await response.json();
+    async function getContent({
+        params,
+    }: GetContentArgs): Promise<ContentAPIResponse> {
+        let result: ContentApiData[] = [];
+        let json = await get(`${baseUrl}/content?${params}`);
 
         // the content endpoint can return an array (in form json.data) if more than one item returned, or single object (just json)
         // if the request return only one item.
         // We will normalise this to always return an array
-        if (json.data) {
-            return json.data;
+        if (!json.data) {
+            console.log('json.data is null');
+            result.push(json);
+            return result;
         }
-        return [json];
+
+        // add first page of results
+        result = result.concat(json.data);
+
+        console.log('json.links.next', json.links.next);
+
+        // concat all subsequent pages of results
+        while (json.links.next) {
+            json = await get(json.links.next);
+            result = result.concat(json.data);
+        }
+
+        console.log('result', result);
+
+        return result;
     }
 
     async function getContentBySlug(slug: string, draft = false) {
