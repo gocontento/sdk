@@ -13,10 +13,26 @@ interface GetContentArgs {
 
 export interface ContentoClient {
     getContent: (args: GetContentArgs) => Promise<any>;
-    getContentBySlug: (slug: string, draft?: boolean) => Promise<any>;
-    getContentByType: (contentType: string, draft?: boolean) => Promise<any>;
+    getContentBySlug: (
+        slug: string,
+        sortBy: sortBy,
+        sortDirection: sortDirection
+    ) => Promise<ContentAPIResponse>;
+    getContentByType: (
+        contentType: string,
+        sortBy: sortBy,
+        sortDirection: sortDirection
+    ) => Promise<ContentAPIResponse>;
     // getPathsForType: (contentType: string, draft?: boolean) => Promise<any>;
 }
+
+export interface ContentAPIResponse {
+    content: ContentApiData[];
+    nextPage?: any;
+}
+
+export type sortBy = 'published_at' | 'created_at' | 'updated_at' | 'name';
+export type sortDirection = 'asc' | 'desc';
 
 function ContentoClient({
     baseUrl,
@@ -25,11 +41,6 @@ function ContentoClient({
     baseUrl: string;
     headers: Headers;
 }): ContentoClient {
-    type ContentAPIResponse = {
-        content: ContentApiData[];
-        nextPage?: any;
-    };
-
     async function get(url: string) {
         try {
             const response = await fetch(url, {
@@ -90,10 +101,15 @@ function ContentoClient({
         return result;
     }
 
-    async function getContentBySlug(slug: string): Promise<ContentAPIResponse> {
+    async function getContentBySlug(
+        slug: string,
+        sortBy: sortBy = 'published_at',
+        sortDirection: sortDirection = 'desc'
+    ): Promise<ContentAPIResponse> {
         const params = {
             slug,
             limit: '1',
+            sort: `${sortBy}:${sortDirection}`,
         };
 
         return getContent({ params });
@@ -101,10 +117,12 @@ function ContentoClient({
 
     async function getContentByType(
         contentType: string,
-        draft = false
+        sortBy: sortBy = 'published_at',
+        sortDirection: sortDirection = 'desc'
     ): Promise<ContentAPIResponse> {
         const params = {
             content_type: contentType,
+            sort: `${sortBy}:${sortDirection}`,
         };
         return getContent({ params });
     }
