@@ -13,7 +13,10 @@ interface GetContentArgs {
 
 export interface ContentoClient {
     getContent: (args: GetContentArgs) => Promise<ContentAPIResponse>;
-    getContentBySlug: (slug: string) => Promise<ContentApiData>;
+    getContentBySlug: (
+        slug: string,
+        contentType: string
+    ) => Promise<ContentApiData>;
     getContentByType: (
         contentType: string,
         sortBy?: sortBy,
@@ -95,8 +98,12 @@ function ContentoClient({
         return result;
     }
 
-    async function getContentBySlug(slug: string): Promise<ContentApiData> {
+    async function getContentBySlug(
+        slug: string,
+        contentType: string
+    ): Promise<ContentApiData> {
         const params = {
+            content_type: contentType,
             slug,
             limit: '1',
         };
@@ -118,11 +125,6 @@ function ContentoClient({
         };
         return getContent({ params });
     }
-
-    // async function getPathsForType(contentType: string, draft = false) {
-    //     const content = await getContentByType(contentType, draft);
-    //     return content.map((item: any) => item.slug);
-    // }
 
     return {
         getContent,
