@@ -20,10 +20,10 @@ export async function enableDraftAndRedirect(
 
     // Fetch the headless CMS to check if the provided `slug` exists
     // getPostBySlug would implement the required fetching logic to the headless CMS
-    const post = await client.getContentBySlug(slug);
+    const content = await client.getContentBySlug(slug);
 
     // If the slug doesn't exist prevent draft mode from being enabled
-    if (!post) {
+    if (!content) {
         return new Response('Invalid slug', { status: 401 });
     }
 
@@ -31,5 +31,5 @@ export async function enableDraftAndRedirect(
 
     // Redirect to the path from the fetched post
     // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
-    redirect(`/${post.uri}`);
+    redirect(`/${content.uri}`);
 }

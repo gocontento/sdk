@@ -13,17 +13,12 @@ interface GetContentArgs {
 
 export interface ContentoClient {
     getContent: (args: GetContentArgs) => Promise<any>;
-    getContentBySlug: (
-        slug: string,
-        sortBy: sortBy,
-        sortDirection: sortDirection
-    ) => Promise<ContentAPIResponse>;
+    getContentBySlug: (slug: string) => Promise<ContentApiData>;
     getContentByType: (
         contentType: string,
-        sortBy: sortBy,
-        sortDirection: sortDirection
+        sortBy?: sortBy,
+        sortDirection?: sortDirection
     ) => Promise<ContentAPIResponse>;
-    // getPathsForType: (contentType: string, draft?: boolean) => Promise<any>;
 }
 
 export interface ContentAPIResponse {
@@ -70,7 +65,6 @@ function ContentoClient({
     async function getContent({
         params,
     }: GetContentArgs): Promise<ContentAPIResponse> {
-        // let result: ContentApiData[] = [];
         const json = await get(
             `${baseUrl}/content?${new URLSearchParams(params)}`
         );
@@ -101,18 +95,16 @@ function ContentoClient({
         return result;
     }
 
-    async function getContentBySlug(
-        slug: string,
-        sortBy: sortBy = 'published_at',
-        sortDirection: sortDirection = 'desc'
-    ): Promise<ContentAPIResponse> {
+    async function getContentBySlug(slug: string): Promise<ContentApiData> {
         const params = {
             slug,
             limit: '1',
-            sort: `${sortBy}:${sortDirection}`,
         };
 
-        return getContent({ params });
+        const contentResponse: ContentAPIResponse = await getContent({
+            params,
+        });
+        return contentResponse.content[0];
     }
 
     async function getContentByType(

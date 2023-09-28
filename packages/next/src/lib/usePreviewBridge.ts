@@ -4,8 +4,6 @@ export default function usePreviewBridge(
     draftMode: boolean,
     router: AppRouterInstance
 ) {
-    console.log('usePreviewBridge');
-
     // only run client side and in draft mode
     if (typeof window === 'undefined' || !draftMode) {
         return;
@@ -18,7 +16,6 @@ export default function usePreviewBridge(
 
     useEffect(() => {
         function refreshPreview(event: MessageEvent) {
-            console.log('refreshPreview');
             if (event.data !== 'contento-refresh-preview') {
                 return;
             }
@@ -28,7 +25,6 @@ export default function usePreviewBridge(
         window.addEventListener('message', refreshPreview);
         // remove event listeners on cleanup
         return () => {
-            // window.removeEventListener('scroll', saveScrollPos);
             window.removeEventListener('message', refreshPreview);
         };
     }, []);
