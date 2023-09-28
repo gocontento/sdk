@@ -12,7 +12,7 @@ interface GetContentArgs {
 }
 
 export interface ContentoClient {
-    getContent: (args: GetContentArgs) => Promise<any>;
+    getContent: (args: GetContentArgs) => Promise<ContentAPIResponse>;
     getContentBySlug: (slug: string) => Promise<ContentApiData>;
     getContentByType: (
         contentType: string,
