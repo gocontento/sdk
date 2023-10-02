@@ -12,10 +12,10 @@ npm install @gocontento/client
 ## Basic usage
 
 ```javascript
-import {client as contentClient} from "@gocontento/next";
+import { Client } from "@gocontento/next";
 
 // create client
- const client =  contentClient.createContentoClient({
+ const client =  Client.createContentoClient({
     apiURL: "CONTENTO_API_URL",
     apiKey: "CONTENTO_API_KEY",
     siteId: "CONTENTO_SITE_ID",
@@ -51,10 +51,10 @@ Parameters:
 example:
 
 ```javascript
-import {client as contentClient} from "@gocontento/next";
+import {Client} from "@gocontento/next";
 
 // create client
- const client =  contentClient.createContentoClient({
+ const client =  Client.createContentoClient({
     apiURL: "CONTENTO_API_URL",
     apiKey: "CONTENTO_API_KEY",
     siteId: "CONTENTO_SITE_ID",
