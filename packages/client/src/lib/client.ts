@@ -13,10 +13,14 @@ interface GetContentArgs {
 
 export interface ContentoClient {
     getContent: (args: GetContentArgs) => Promise<ContentAPIResponse>;
+
     getContentBySlug: (
         slug: string,
         contentType: string
     ) => Promise<ContentApiData>;
+
+    getContentById: (id: string) => Promise<ContentApiData>;
+
     getContentByType: (
         contentType: string,
         sortBy?: sortBy,
@@ -114,6 +118,10 @@ function ContentoClient({
         return contentResponse.content[0];
     }
 
+    async function getContentById(id: string): Promise<ContentApiData> {
+        return await get(`${baseUrl}/content/${id}`);
+    }
+
     async function getContentByType(
         contentType: string,
         sortBy: sortBy = 'published_at',
@@ -130,20 +138,27 @@ function ContentoClient({
         getContent,
         getContentBySlug,
         getContentByType,
+        getContentById,
     };
 }
 
-//test comment
-
-export function createContentoClient(contentoConfig: ContentoClientConfig) {
+export function createContentoClient({
+    apiKey,
+    apiURL,
+    siteId,
+    isPreview = false,
+}: ContentoClientConfig) {
     const headers = new Headers({
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + contentoConfig.apiKey,
-        'X-CONTENTO-SITE': contentoConfig.siteId,
-        'X-CONTENTO-PREVIEW': contentoConfig.isPreview.toString(),
+        Authorization: 'Bearer ' + apiKey,
+        'X-CONTENTO-SITE': siteId,
     });
+    if (isPreview) {
+        headers.append('X-CONTENTO-PREVIEW', 'true');
+    }
+
     return ContentoClient({
-        baseUrl: contentoConfig.apiURL,
+        baseUrl: apiURL,
         headers,
     });
 }
