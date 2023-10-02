@@ -118,7 +118,7 @@ export default async function Page() {
 }
 
 ```
-See full client documentation here: [Client documentation](./packages/client)
+See full client documentation here: [Client documentation](/packages/client)
 
 
 
