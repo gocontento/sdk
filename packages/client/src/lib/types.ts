@@ -1,4 +1,8 @@
-export type AssetApiData = {
+/**
+ * Types for models returned by the API
+ */
+
+export type AssetData = {
     id: string;
     name: string;
     description: string | null;
@@ -11,13 +15,13 @@ export type AssetApiData = {
     width: string | null;
     height: string | null;
 };
-export type BlockApiData = {
+export type BlockData = {
     name: string;
     sort: number;
     fields: any;
-    content_type: ContentTypeApiData;
+    content_type: ContentTypeData;
 };
-export type ContentApiData = {
+export type ContentData = {
     id: string;
     published_at: string | null;
     slug: string | null;
@@ -26,12 +30,12 @@ export type ContentApiData = {
     url: string | null;
     created_at: string;
     updated_at: string;
-    author: UserApiData;
-    content_type: ContentTypeApiData;
-    seo: SeoApiData;
+    author: UserData;
+    content_type: ContentTypeData;
+    seo: SeoData;
     fields: any;
 };
-export type ContentLinkApiData = {
+export type ContentLinkData = {
     id: string;
     published_at: string | null;
     name: string;
@@ -40,13 +44,13 @@ export type ContentLinkApiData = {
     url: string | null;
     fields: any | null;
 };
-export type ContentTypeApiData = {
+export type ContentTypeData = {
     id: string;
     name: string;
     handle: string;
     object_type: string;
 };
-export type FieldApiData = {
+export type FieldData = {
     id: string;
     name: string;
     handle: string;
@@ -62,14 +66,14 @@ export type FieldApiData = {
     is_on: any | boolean | null;
     selected_option: any | Array<any>;
 };
-export type SeoApiData = {
+export type SeoData = {
     title: string | null;
     description: string | null;
     robots: string | null;
     canonical_url: string | null;
-    open_graph: SeoOpenGraphApiData;
+    open_graph: SeoOpenGraphData;
 };
-export type SeoOpenGraphApiData = {
+export type SeoOpenGraphData = {
     title: string | null;
     description: string | null;
     image_secure_url: string | null;
@@ -78,7 +82,7 @@ export type SeoOpenGraphApiData = {
     image_alt: string | null;
     url: string;
 };
-export type UserApiData = {
+export type UserData = {
     id: string;
     name: string;
     email: string;

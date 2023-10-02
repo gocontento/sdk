@@ -1,4 +1,4 @@
-import { ContentApiData } from './api-types';
+import { ContentData } from './types';
 
 interface ContentoClientConfig {
     apiKey: string;
@@ -17,9 +17,9 @@ export interface ContentoClient {
     getContentBySlug: (
         slug: string,
         contentType: string
-    ) => Promise<ContentApiData>;
+    ) => Promise<ContentData>;
 
-    getContentById: (id: string) => Promise<ContentApiData>;
+    getContentById: (id: string) => Promise<ContentData>;
 
     getContentByType: (
         contentType: string,
@@ -29,7 +29,7 @@ export interface ContentoClient {
 }
 
 export interface ContentAPIResponse {
-    content: ContentApiData[];
+    content: ContentData[];
     nextPage?: any;
 }
 
@@ -105,7 +105,7 @@ function ContentoClient({
     async function getContentBySlug(
         slug: string,
         contentType: string
-    ): Promise<ContentApiData> {
+    ): Promise<ContentData> {
         const params = {
             content_type: contentType,
             slug,
@@ -118,7 +118,7 @@ function ContentoClient({
         return contentResponse.content[0];
     }
 
-    async function getContentById(id: string): Promise<ContentApiData> {
+    async function getContentById(id: string): Promise<ContentData> {
         return await get(`${baseUrl}/content/${id}`);
     }
 
