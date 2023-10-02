@@ -1,11 +1,193 @@
-# client
+# @gocontento/client
 
-This library was generated with [Nx](https://nx.dev).
+The official Javascript and Typescript client for [Contento](https://contento.io).
 
-## Building
+- simplify fetching data from the Contento API
 
-Run `nx build client` to build the library.
+## Installation
 
-## Running unit tests
+```bash
+npm install @gocontento/client
+```
+## Basic usage
 
-Run `nx test client` to execute the unit tests via [Jest](https://jestjs.io).
+```javascript
+import {client as contentClient} from "@gocontento/next";
+
+// create client
+ const client =  contentClient.createContentoClient({
+    apiURL: "CONTENTO_API_URL",
+    apiKey: "CONTENTO_API_KEY",
+    siteId: "CONTENTO_SITE_ID",
+    isPreview: true,
+  });
+ 
+ 
+ // fetch content
+const page = await client.getContentById("CONTENT_HASH_ID");
+
+// fetch content by type
+const contentResponse = await client.getContentByType("CONTENT_TYPE");
+const contentData = contentResponse.content;
+const nextPageResponse = await contentResponse.nextPage();
+ 
+
+```
+
+## Documentation
+
+### Function `createContentoClient(config)`
+Return a new Contento client object.
+
+Parameters:
+
+- `ContentoClientConfig` - object with the following properties:
+  - `apiURL` - string - the url of the Contento API
+  - `apiKey` - string - the api key of the Contento API
+  - `siteId` - string - the site id of the Contento API
+  - `isPreview` - boolean - if true, the client will fetch the preview version of the content
+
+
+example:
+
+```javascript
+import {client as contentClient} from "@gocontento/next";
+
+// create client
+ const client =  contentClient.createContentoClient({
+    apiURL: "CONTENTO_API_URL",
+    apiKey: "CONTENTO_API_KEY",
+    siteId: "CONTENTO_SITE_ID",
+    isPreview: true,
+  });
+
+```
+
+## Object `ContentoClient`
+
+The Contento client object.
+
+### Methods:
+
+#### `getContentById(id)` 
+
+fetch content by id
+
+##### parameters:
+- id - string - the `hash_id` property of the content object 
+
+##### returns - `Promise<ContentoContent>` - the content object
+
+example:
+
+```javascript
+ const page = await client.getContentById("CONTENT_HASH_ID");
+
+```
+
+#### `getContentBySlug(slug, content_type)`
+
+Fetch content by slug.
+
+##### parameters:
+- slug - string - the `slug` property of the content to be returned.
+- content_type - string - slugs are unique only within a content type, so we must pass `content_type` to ensure we target the correct content object.
+
+##### returns - `Promise<ContentoContent>` - the content object
+
+example:
+
+```javascript
+
+ const content = await client.getContentBySlug("blog_post", 'my-first-blog-post');
+ ```
+
+#### `getContentByType(type, sortBy, sortDirection)`
+
+Fetch content by content type.
+
+##### parameters:
+- type - string - the `content_type` property of the content to be returned.
+- sortBy - string - the property to sort by. Defaults to `published_at`.
+- sortDirection - 'asc' | 'desc' - the direction to sort by. Defaults to `desc`.
+
+##### returns - `Promise<ContentAPIResponse>` 
+Returns a promise that resolves to a `ContentAPIResponse` object. The `ContentAPIResponse` object has the following properties:
+
+- `content` - array of `ContentoContent` objects
+- `nextPage()?` - async function. Returns a `ContentAPIResponse` object for the next page of content.
+
+examples:
+
+get single page of content
+
+```javascript
+
+ const singlePageOfContent = await client.getContentByType("blog_post");
+ const contentData = singlePageOfContent.content;
+ ```
+Get all pages content of type
+
+```javascript
+ let contentResponse = await client.getContentByType('blog_post', 'published_at', 'desc')
+ let content = [...contentResponse.content];
+
+ // build array of content until there are no more pages
+ while(contentResponse.nextPage){
+   contentResponse = await contentResponse.nextPage();
+   content = content.concat(contentResponse.content);
+ }
+
+```
+
+#### `getContent(params)`
+
+Generic method to fetch content. See params documented in the [contento docs](https://www.contento.io/docs/content-api/v1/endpoints#list-all-content).
+
+##### parameters:
+- params - object - the params to pass to the Contento API
+
+##### returns - `Promise<ContentAPIResponse>`
+Returns a promise that resolves to a `ContentAPIResponse` object. The `ContentAPIResponse` object has the following properties:
+
+- `content` - array of `ContentoContent` objects
+- `nextPage()?` - async function. Returns a `ContentAPIResponse` object for the next page of content.
+
+examples:
+
+get single page of content
+
+```javascript
+
+ const params = {
+    content_type: 'blog_post',
+    sort_by: 'published_at',
+    sort_direction: 'desc',
+    author: 'John Doe'
+ }
+ const singlePageOfContent = await client.getContent(params);
+ const contentData = singlePageOfContent.content;
+ ```
+Get all pages content of type
+
+```javascript
+ const params = {
+  content_type: 'blog_post',
+  sort_by: 'published_at',
+  sort_direction: 'desc',
+  author: 'John Doe'
+} 
+
+let contentResponse = await client.getContent(params)
+ let content = [...contentResponse.content];
+
+ // build array of content until there are no more pages
+ while(contentResponse.nextPage){
+   contentResponse = await contentResponse.nextPage();
+   content = content.concat(contentResponse.content);
+ }
+
+```
+
+
+
