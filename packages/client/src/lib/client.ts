@@ -8,7 +8,7 @@ interface ContentoClientConfig {
 }
 
 interface GetContentArgs {
-    params: Record<string, string>;
+    params: Record<string, string | string[]>;
 }
 
 export interface ContentoClient {
@@ -69,11 +69,32 @@ function ContentoClient({
         }
     }
 
+    /**
+     * Process the params object to convert any array values into a format that the API expects
+     * See docs for more info: https://www.contento.io/docs/content-api/v1/endpoints#list-all-content
+     * @param params
+     */
+    function processParams(
+        params: Record<string, string | string[]>
+    ): Record<string, string> {
+        for (const property in params) {
+            if (Array.isArray(params[property])) {
+                const arr = params[property] as string[];
+                delete params[property];
+                arr.forEach((value, index) => {
+                    params[`${property}[${index}]`] = value;
+                });
+            }
+        }
+
+        return params as Record<string, string>;
+    }
+
     async function getContent({
         params,
     }: GetContentArgs): Promise<ContentAPIResponse> {
         const json = await get(
-            `${baseUrl}/content?${new URLSearchParams(params)}`
+            `${baseUrl}/content?${new URLSearchParams(processParams(params))}`
         );
 
         // the content endpoint can return an array (in form json.data) if more than one item returned, or single object (just json)
@@ -123,7 +144,7 @@ function ContentoClient({
     }
 
     async function getContentByType(
-        contentType: string,
+        contentType: string | string[],
         sortBy: sortBy = 'published_at',
         sortDirection: sortDirection = 'desc'
     ): Promise<ContentAPIResponse> {
