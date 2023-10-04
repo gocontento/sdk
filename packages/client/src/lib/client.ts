@@ -23,6 +23,7 @@ export interface ContentoClient {
 
     getContentByType: (
         contentType: string,
+        limit?: number,
         sortBy?: sortBy,
         sortDirection?: sortDirection
     ) => Promise<ContentAPIResponse>;
@@ -145,12 +146,14 @@ function ContentoClient({
 
     async function getContentByType(
         contentType: string | string[],
+        limit = 20,
         sortBy: sortBy = 'published_at',
         sortDirection: sortDirection = 'desc'
     ): Promise<ContentAPIResponse> {
         const params = {
             content_type: contentType,
             sort: `${sortBy}:${sortDirection}`,
+            limit: limit.toString(),
         };
         return getContent({ params });
     }
