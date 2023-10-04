@@ -1,4 +1,4 @@
-import { ContentApiData } from './api-types';
+import { ContentData } from './types';
 
 interface ContentoClientConfig {
     apiKey: string;
@@ -8,26 +8,28 @@ interface ContentoClientConfig {
 }
 
 interface GetContentArgs {
-    params: Record<string, string>;
+    params: Record<string, string | string[]>;
 }
 
 export interface ContentoClient {
-    getContent: (args: GetContentArgs) => Promise<any>;
+    getContent: (args: GetContentArgs) => Promise<ContentAPIResponse>;
+
     getContentBySlug: (
         slug: string,
-        sortBy: sortBy,
-        sortDirection: sortDirection
-    ) => Promise<ContentAPIResponse>;
+        contentType: string
+    ) => Promise<ContentData>;
+
+    getContentById: (id: string) => Promise<ContentData>;
+
     getContentByType: (
         contentType: string,
-        sortBy: sortBy,
-        sortDirection: sortDirection
+        sortBy?: sortBy,
+        sortDirection?: sortDirection
     ) => Promise<ContentAPIResponse>;
-    // getPathsForType: (contentType: string, draft?: boolean) => Promise<any>;
 }
 
 export interface ContentAPIResponse {
-    content: ContentApiData[];
+    content: ContentData[];
     nextPage?: any;
 }
 
@@ -67,12 +69,32 @@ function ContentoClient({
         }
     }
 
+    /**
+     * Process the params object to convert any array values into a format that the API expects
+     * See docs for more info: https://www.contento.io/docs/content-api/v1/endpoints#list-all-content
+     * @param params
+     */
+    function processParams(
+        params: Record<string, string | string[]>
+    ): Record<string, string> {
+        for (const property in params) {
+            if (Array.isArray(params[property])) {
+                const arr = params[property] as string[];
+                delete params[property];
+                arr.forEach((value, index) => {
+                    params[`${property}[${index}]`] = value;
+                });
+            }
+        }
+
+        return params as Record<string, string>;
+    }
+
     async function getContent({
         params,
     }: GetContentArgs): Promise<ContentAPIResponse> {
-        // let result: ContentApiData[] = [];
         const json = await get(
-            `${baseUrl}/content?${new URLSearchParams(params)}`
+            `${baseUrl}/content?${new URLSearchParams(processParams(params))}`
         );
 
         // the content endpoint can return an array (in form json.data) if more than one item returned, or single object (just json)
@@ -103,20 +125,26 @@ function ContentoClient({
 
     async function getContentBySlug(
         slug: string,
-        sortBy: sortBy = 'published_at',
-        sortDirection: sortDirection = 'desc'
-    ): Promise<ContentAPIResponse> {
+        contentType: string
+    ): Promise<ContentData> {
         const params = {
+            content_type: contentType,
             slug,
             limit: '1',
-            sort: `${sortBy}:${sortDirection}`,
         };
 
-        return getContent({ params });
+        const contentResponse: ContentAPIResponse = await getContent({
+            params,
+        });
+        return contentResponse.content[0];
+    }
+
+    async function getContentById(id: string): Promise<ContentData> {
+        return await get(`${baseUrl}/content/${id}`);
     }
 
     async function getContentByType(
-        contentType: string,
+        contentType: string | string[],
         sortBy: sortBy = 'published_at',
         sortDirection: sortDirection = 'desc'
     ): Promise<ContentAPIResponse> {
@@ -127,29 +155,31 @@ function ContentoClient({
         return getContent({ params });
     }
 
-    // async function getPathsForType(contentType: string, draft = false) {
-    //     const content = await getContentByType(contentType, draft);
-    //     return content.map((item: any) => item.slug);
-    // }
-
     return {
         getContent,
         getContentBySlug,
         getContentByType,
+        getContentById,
     };
 }
 
-//test comment
-
-export function createContentoClient(contentoConfig: ContentoClientConfig) {
+export function createContentoClient({
+    apiKey,
+    apiURL,
+    siteId,
+    isPreview = false,
+}: ContentoClientConfig) {
     const headers = new Headers({
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + contentoConfig.apiKey,
-        'X-CONTENTO-SITE': contentoConfig.siteId,
-        'X-CONTENTO-PREVIEW': contentoConfig.isPreview.toString(),
+        Authorization: 'Bearer ' + apiKey,
+        'X-CONTENTO-SITE': siteId,
     });
+    if (isPreview) {
+        headers.append('X-CONTENTO-PREVIEW', 'true');
+    }
+
     return ContentoClient({
-        baseUrl: contentoConfig.apiURL,
+        baseUrl: apiURL,
         headers,
     });
 }

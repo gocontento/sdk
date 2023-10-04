@@ -13,17 +13,17 @@ export async function enableDraftAndRedirect(
     // Parse query string parameters
     const { searchParams } = new URL(request.url);
     const secretParam = searchParams.get('secret');
-    const slug = searchParams.get('slug');
-    if (secretParam !== secret || !slug) {
+    const id = searchParams.get('id');
+    if (secretParam !== secret || !id) {
         return new Response('Invalid token', { status: 401 });
     }
 
     // Fetch the headless CMS to check if the provided `slug` exists
     // getPostBySlug would implement the required fetching logic to the headless CMS
-    const post = await client.getContentBySlug(slug);
+    const content = await client.getContentById(id);
 
     // If the slug doesn't exist prevent draft mode from being enabled
-    if (!post) {
+    if (!content) {
         return new Response('Invalid slug', { status: 401 });
     }
 
@@ -31,5 +31,5 @@ export async function enableDraftAndRedirect(
 
     // Redirect to the path from the fetched post
     // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
-    redirect(`/${post.uri}`);
+    redirect(`/${content.uri}`);
 }
