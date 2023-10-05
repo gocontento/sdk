@@ -27,7 +27,9 @@ import { Client } from "@gocontento/next";
 const page = await client.getContentById("CONTENT_HASH_ID");
 
 // fetch content by type
-const contentResponse = await client.getContentByType("CONTENT_TYPE");
+const contentResponse = await client.getContentByType({
+    contentType: "CONTENT_TYPE_HANDLE"
+});
 const contentData = contentResponse.content;
 const nextPageResponse = await contentResponse.nextPage();
  
@@ -102,12 +104,13 @@ example:
  const content = await client.getContentBySlug("blog_post", 'my-first-blog-post');
  ```
 
-#### `getContentByType(type, sortBy, sortDirection)`
+#### `getContentByType(options)`
 
-Fetch content by content type.
+Fetch content by content type. Options you be an object with at least the `contentType` key.
 
-##### parameters:
-- type - string - the `content_type` property of the content to be returned.
+##### options:
+- contentType - string - required - the `content_type` property of the content to be returned.
+- limit - number - the amount of content objects per page, defaults to 20, max is 100.
 - sortBy - string - the property to sort by. Defaults to `published_at`.
 - sortDirection - 'asc' | 'desc' - the direction to sort by. Defaults to `desc`.
 
@@ -123,13 +126,19 @@ get single page of content
 
 ```javascript
 
- const singlePageOfContent = await client.getContentByType("blog_post");
+ const singlePageOfContent = await client.getContentByType({
+     contentType: "blog_post"
+ });
  const contentData = singlePageOfContent.content;
  ```
 Get all pages content of type
 
 ```javascript
- let contentResponse = await client.getContentByType('blog_post', 'published_at', 'desc')
+ let contentResponse = await client.getContentByType({
+    contentType: "blog_post",
+    sortBy: "published_at",
+    sortDirection: "desc"
+ })
  let content = [...contentResponse.content];
 
  // build array of content until there are no more pages
