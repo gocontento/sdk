@@ -98,13 +98,19 @@ For example, your index page might look something like this:
 ```typescript jsx
 export default async function Page() {
   const client = createClient();
-  let contentResponse = await client.getContentByType('blog_post', 'published_at', 'desc')
+  
+  let contentResponse = await client.getContentByType({
+      contentType: "blog_post",
+      sortBy: "published_at",
+      sortDirection: "desc"
+  })
+  
   let content = [...contentResponse.content];
+  
   while(contentResponse.nextPage){
     contentResponse = await contentResponse.nextPage();
     content = content.concat(contentResponse.content);
   }
-
 
   return (
     <div className="container mx-auto px-5">

@@ -11,6 +11,13 @@ interface GetContentArgs {
     params: Record<string, string | string[]>;
 }
 
+interface GetContentByTypeArgs {
+    contentType: string;
+    limit?: number;
+    sortBy?: sortBy;
+    sortDirection?: sortDirection;
+}
+
 export interface ContentoClient {
     getContent: (args: GetContentArgs) => Promise<ContentAPIResponse>;
 
@@ -22,9 +29,7 @@ export interface ContentoClient {
     getContentById: (id: string) => Promise<ContentData>;
 
     getContentByType: (
-        contentType: string,
-        sortBy?: sortBy,
-        sortDirection?: sortDirection
+        args: GetContentByTypeArgs
     ) => Promise<ContentAPIResponse>;
 }
 
@@ -143,14 +148,16 @@ function ContentoClient({
         return await get(`${baseUrl}/content/${id}`);
     }
 
-    async function getContentByType(
-        contentType: string | string[],
-        sortBy: sortBy = 'published_at',
-        sortDirection: sortDirection = 'desc'
-    ): Promise<ContentAPIResponse> {
+    async function getContentByType({
+        contentType,
+        limit = 10,
+        sortBy = 'published_at',
+        sortDirection = 'desc',
+    }: GetContentByTypeArgs): Promise<ContentAPIResponse> {
         const params = {
             content_type: contentType,
             sort: `${sortBy}:${sortDirection}`,
+            limit: limit.toString(),
         };
         return getContent({ params });
     }
