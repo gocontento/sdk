@@ -1,42 +1,58 @@
-# @gocontento/client
+# JavaScript Client for the Contento API
 
-The official Javascript and Typescript client for [Contento](https://contento.io).
-
-- simplify fetching data from the Contento API
+The official JavaScript and Typescript client for [Contento](https://contento.io).
 
 ## Installation
 
 ```bash
 npm install @gocontento/client
 ```
+
 ## Basic usage
 
-```javascript
-import { Client } from "@gocontento/next";
+In most scenarios you will want to create a [client](#object-contentoclient) once for the whole application, then re-use it whenever you make calls to the Contento API.
 
-// create client
- const client =  Client.createContentoClient({
+To assist in that, we have a [`createContentoClient()`](#function-createcontentoclientconfig) function that you can use:
+
+```javascript
+import { createContentoClient } from "@gocontento/client";
+
+// Create the client
+const client =  createContentoClient({
     apiURL: "CONTENTO_API_URL",
     apiKey: "CONTENTO_API_KEY",
     siteId: "CONTENTO_SITE_ID",
-    isPreview: true,
-  });
- 
- 
- // fetch content
-const page = await client.getContentById("CONTENT_HASH_ID");
+    isPreview: false,
+});
+```
 
-// fetch content by type
+Once you have the client instance, you can start fetching data. For example, you can use the ID of a page with the [`getContentById()`](#getcontentbyidid) method like so:
+
+```javascript
+// Fetch a content object using the ID
+const page = await client.getContentById("CONTENT_HASH_ID");
+```
+
+Or, you can fetch a list of content using [`getContentByType()`](#getcontentbytypeoptions) 
+
+```javascript
+// Fetch some content by type
 const contentResponse = await client.getContentByType({
     contentType: "CONTENT_TYPE_HANDLE"
 });
-const contentData = contentResponse.content;
-const nextPageResponse = await contentResponse.nextPage();
- 
 
+// Get the array of objects from the response
+const contentData = contentResponse.content;
+
+// Or, fetch the next page in the list
+const nextPageResponse = await contentResponse.nextPage();
 ```
 
+
 ## Documentation
+
+TODO summary
+
 
 ### Function `createContentoClient(config)`
 Return a new Contento client object.
@@ -71,7 +87,7 @@ The Contento client object.
 
 ### Methods:
 
-#### `getContentById(id)` 
+#### `getContentById(id)`
 
 fetch content by id
 
