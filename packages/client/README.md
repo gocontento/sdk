@@ -39,15 +39,15 @@ Or, you can fetch a list of content using [`getContentByType()`](https://www.con
 
 ```javascript
 // Fetch some content by type
-const contentResponse = await client.getContentByType({
+const response = await client.getContentByType({
     contentType: "content_type_handle"
 });
 
 // Get the array of objects from the response
-const contentData = contentResponse.content;
+const contentData = response.content;
 
 // Or, fetch the next page in the list
-const nextPageResponse = await contentResponse.nextPage();
+const nextPageResponse = await response.nextPage();
 ```
 
 ## Documentation
@@ -59,4 +59,5 @@ For full documentation please go to [https://www.contento.io/docs/sdk/client](ht
 
 If you have a bug or feature request then please [submit an issue](https://github.com/gocontento/sdk/issues/new).
 
-If you have questions about Contento, or need help in some other way, then you can reach out to us via [email](mailto:josh@contento.io) or join our [Discord server](https://discord.gg/dZERPfBV).
+If you have questions about Contento, or need help in some other way, then you can reach out to us via
+[email](mailto:josh@contento.io) or join our [Discord server](https://discord.gg/dZERPfBV).
