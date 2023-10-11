@@ -10,21 +10,18 @@ export function usePreviewBridge({
     const [content, setContentValue] = useState(initialContent);
 
     if (typeof window === 'undefined') {
-        console.log('usePreviewBridge: window is undefined');
         return { content };
     }
 
     const router = useRouter();
 
     function emitLoadedEvent() {
-        console.log('usePreviewBridge: emitLoadedEvent');
         if (window?.top) {
             window.top.postMessage('loaded', '*');
         }
     }
 
     function refreshPreview() {
-        console.log('usePreviewBridge: refreshPreview');
         // refresh current route
         router.refresh();
     }
@@ -40,7 +37,6 @@ export function usePreviewBridge({
                 updateContent(JSON.parse(event.data.content));
                 break;
             case 'contento-refresh-preview':
-                console.log('contento-refresh-preview');
                 refreshPreview();
         }
     }
