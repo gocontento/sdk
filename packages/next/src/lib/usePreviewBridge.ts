@@ -1,31 +1,61 @@
-import { useEffect } from 'react';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-export default function usePreviewBridge(
-    draftMode: boolean,
-    router: AppRouterInstance
-) {
-    // only run client side and in draft mode
-    if (typeof window === 'undefined' || !draftMode) {
-        return;
+'use client';
+import { useEffect, useState } from 'react';
+import type { ContentData } from '@client';
+import { useRouter } from 'next/navigation';
+export function usePreviewBridge({
+    content: initialContent,
+}: {
+    content: ContentData;
+}) {
+    const [content, setContentValue] = useState(initialContent);
+
+    if (typeof window === 'undefined') {
+        console.log('usePreviewBridge: window is undefined');
+        return { content };
     }
 
-    // send message from contento preview iframe indicating that preview has rendered
-    if (window.top) {
-        window.top.postMessage('loaded', '*');
+    const router = useRouter();
+
+    function emitLoadedEvent() {
+        console.log('usePreviewBridge: emitLoadedEvent');
+        if (window?.top) {
+            window.top.postMessage('loaded', '*');
+        }
+    }
+
+    function refreshPreview() {
+        console.log('usePreviewBridge: refreshPreview');
+        // refresh current route
+        router.refresh();
+    }
+
+    function updateContent(content: ContentData) {
+        setContentValue(content);
+        emitLoadedEvent();
+    }
+
+    function onMessage(event: MessageEvent) {
+        switch (event.data.message) {
+            case 'contento-update-content':
+                updateContent(JSON.parse(event.data.content));
+                break;
+            case 'contento-refresh-preview':
+                console.log('contento-refresh-preview');
+                refreshPreview();
+        }
     }
 
     useEffect(() => {
-        function refreshPreview(event: MessageEvent) {
-            if (event.data !== 'contento-refresh-preview') {
-                return;
-            }
-            router.refresh();
-        }
+        // send message from contento preview iframe indicating that preview has rendered
+        emitLoadedEvent();
+        window.addEventListener('message', onMessage);
 
-        window.addEventListener('message', refreshPreview);
         // remove event listeners on cleanup
         return () => {
-            window.removeEventListener('message', refreshPreview);
+            window.removeEventListener('message', onMessage);
         };
-    }, []);
+        //watch initialContent so effect fires on next router refresh
+    }, [initialContent]);
+
+    return { content };
 }
