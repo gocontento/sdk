@@ -17,14 +17,6 @@ npm install @gocontento/next
 
 For full documentation please go to [https://www.contento.io/docs/sdk/next](https://www.contento.io/docs/sdk/next).
 
----
-
-#### New documentation draft
-
-Contento uses draft 
-
-
----
 
 
 
