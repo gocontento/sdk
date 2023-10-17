@@ -20,7 +20,7 @@ export function useLivePreview({
 
     function emitLivePreviewInitMessage() {
         if (window?.top) {
-            window.top.postMessage('live-preview-init', '*');
+            window.top.postMessage('live-preview-enabled', '*');
         }
     }
 
