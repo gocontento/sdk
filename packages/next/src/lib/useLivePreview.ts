@@ -12,14 +12,21 @@ export function useLivePreview({
         return { content };
     }
 
-    function emitLoadedEvent() {
+    function emitLoadedMessage() {
         if (window?.top) {
             window.top.postMessage('loaded', '*');
         }
     }
+
+    function emitLivePreviewInitMessage() {
+        if (window?.top) {
+            window.top.postMessage('live-preview-enabled', '*');
+        }
+    }
+
     function updateContent(content: ContentData) {
         setContentValue(content);
-        emitLoadedEvent();
+        emitLoadedMessage();
     }
 
     function onMessage(event: MessageEvent) {
@@ -30,8 +37,9 @@ export function useLivePreview({
     }
 
     useEffect(() => {
-        // send message from contento preview iframe indicating that preview has rendered
-        emitLoadedEvent();
+        // send message from contento preview iframe indicating
+        // that live preview is ready
+        emitLivePreviewInitMessage();
         window.addEventListener('message', onMessage);
 
         // remove event listeners on cleanup

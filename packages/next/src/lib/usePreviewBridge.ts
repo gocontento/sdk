@@ -34,8 +34,8 @@ export function usePreviewBridge(draftMode: boolean) {
         refresh();
     }
 
-    emitLoadedEvent();
     useEffect(() => {
+        emitLoadedEvent();
         window.addEventListener('message', refreshPreview);
         // remove event listeners on cleanup
         return () => {
