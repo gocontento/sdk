@@ -1,50 +1,56 @@
 {
-  "name": "@gocontento/source",
-  "version": "0.0.0",
-  "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "build-on-change": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
-    "build-all": "nx run-many -t build",
-    "publish:client": "cd dist/client && npm publish --access public",
-    "publish:next": "cd dist/next && npm publish --access public"
-  },
-  "peerDependencies": {
-    "next": ">13.4.0",
-    "react": ">18"
-  },
-  "devDependencies": {
-    "@jscutlery/semver": "^3.1.0",
-    "@nx/eslint-plugin": "16.7.4",
-    "@nx/js": "16.7.4",
-    "@nx/linter": "16.7.4",
-    "@nx/next": "^16.8.1",
-    "@nx/vite": "16.7.4",
-    "@nx/workspace": "16.7.4",
-    "@types/node": "18.7.1",
-    "@types/react": "^18.2.20",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
-    "@vitejs/plugin-react": "^4.0.4",
-    "@vitest/coverage-c8": "~0.32.0",
-    "@vitest/ui": "~0.32.0",
-    "eslint": "~8.46.0",
-    "eslint-config-prettier": "8.1.0",
-    "next": ">13.4.0",
-    "nx": "16.7.4",
-    "nx-cloud": "latest",
-    "prettier": "^2.6.2",
-    "react": "^18.1.0",
-    "rollup-plugin-preserve-directives": "^0.2.0",
-    "typescript": "~5.1.3",
-    "verdaccio": "^5.0.4",
-    "vite": "~4.3.9",
-    "vite-plugin-dts": "~2.3.0",
-    "vitest": "~0.32.0"
-  },
-  "nx": {
-    "includedScripts": []
-  }
+    "name": "@gocontento/source",
+    "version": "0.0.0",
+    "license": "MIT",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "build-on-change": "nx watch --all --verbose -- nx run \\$NX_PROJECT_NAME:build",
+        "build-all": "nx run-many -t build",
+        "publish:client": "cd dist/client && npm publish --access public",
+        "publish:next": "cd dist/next && npm publish --access public"
+    },
+    "peerDependencies": {
+        "next": ">13.4.0",
+        "react": ">18"
+    },
+    "devDependencies": {
+        "@jscutlery/semver": "^3.1.0",
+        "@nx/eslint-plugin": "16.7.4",
+        "@nx/js": "16.7.4",
+        "@nx/linter": "16.7.4",
+        "@nx/next": "^16.8.1",
+        "@nx/vite": "16.7.4",
+        "@nx/workspace": "16.7.4",
+        "@types/node": "18.7.1",
+        "@types/react": "^18.2.20",
+        "@typescript-eslint/eslint-plugin": "^5.60.1",
+        "@typescript-eslint/parser": "^5.60.1",
+        "@vitejs/plugin-react": "^4.0.4",
+        "@vitest/coverage-c8": "~0.32.0",
+        "@vitest/ui": "~0.32.0",
+        "autoprefixer": "10.4.13",
+        "eslint": "~8.46.0",
+        "eslint-config-prettier": "8.1.0",
+        "next": ">13.4.0",
+        "nx": "16.7.4",
+        "nx-cloud": "latest",
+        "postcss": "8.4.21",
+        "prettier": "^2.6.2",
+        "react": "^18.1.0",
+        "rollup-plugin-preserve-directives": "^0.2.0",
+        "tailwindcss": "3.2.7",
+        "typescript": "~5.1.3",
+        "verdaccio": "^5.0.4",
+        "vite": "~4.3.9",
+        "vite-plugin-dts": "~2.3.0",
+        "vitest": "~0.32.0"
+    },
+    "nx": {
+        "includedScripts": []
+    },
+    "dependencies": {
+        "styled-components": "^6.1.1"
+    }
 }

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter as usePagesRouter } from 'next/router';
 import { useRouter } from 'next/navigation';
 export function usePreviewBridge(draftMode: boolean) {
@@ -7,6 +7,8 @@ export function usePreviewBridge(draftMode: boolean) {
     if (typeof window === 'undefined' || !draftMode) {
         return;
     }
+
+    const [isInContentoIframe, setIsInContentoIframe] = useState(false);
 
     function emitLoadedEvent() {
         if (window?.top) {
@@ -16,7 +18,7 @@ export function usePreviewBridge(draftMode: boolean) {
 
     let refresh: () => void;
 
-    // use correct router to refresh depening on if next is
+    // use correct router to refresh depending on if next is
     // using app router or pages router
     try {
         const router = usePagesRouter();
@@ -34,12 +36,24 @@ export function usePreviewBridge(draftMode: boolean) {
         refresh();
     }
 
+    function onMessage(event: MessageEvent) {
+        switch (event.data.message) {
+            case 'contento-refresh-preview':
+                refreshPreview(event);
+        }
+    }
+
     useEffect(() => {
         emitLoadedEvent();
-        window.addEventListener('message', refreshPreview);
+        window.addEventListener('message', onMessage);
+
+        setIsInContentoIframe(window?.top !== window?.self);
+
         // remove event listeners on cleanup
         return () => {
             window.removeEventListener('message', refreshPreview);
         };
     }, []);
+
+    return isInContentoIframe;
 }
