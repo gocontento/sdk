@@ -2,14 +2,21 @@
 import { useEffect, useState } from 'react';
 import { useRouter as usePagesRouter } from 'next/router';
 import { useRouter } from 'next/navigation';
-export function usePreviewBridge(draftMode: boolean) {
+
+function isInIframe() {
+    if (typeof window === 'undefined') {
+        return false;
+    }
+    return window.self !== window.top;
+}
+
+export function usePreviewBridge(draftMode: boolean): boolean {
+    const [showPreviewToolbar, setShowPreviewToolbar] = useState(false);
+
     // only run client side and in draft mode
     if (typeof window === 'undefined' || !draftMode) {
-        return;
+        return showPreviewToolbar;
     }
-
-    const [isInContentoIframe, setIsInContentoIframe] = useState(false);
-
     function emitLoadedEvent() {
         if (window?.top) {
             window.top.postMessage('loaded', '*');
@@ -45,9 +52,8 @@ export function usePreviewBridge(draftMode: boolean) {
 
     useEffect(() => {
         emitLoadedEvent();
+        setShowPreviewToolbar(!isInIframe());
         window.addEventListener('message', onMessage);
-
-        setIsInContentoIframe(window?.top !== window?.self);
 
         // remove event listeners on cleanup
         return () => {
@@ -55,5 +61,5 @@ export function usePreviewBridge(draftMode: boolean) {
         };
     }, []);
 
-    return isInContentoIframe;
+    return showPreviewToolbar;
 }
