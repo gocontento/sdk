@@ -5,6 +5,7 @@ interface ContentoClientConfig {
     apiURL: string;
     siteId: string;
     isPreview: boolean;
+    fetchOptions?: object;
 }
 
 interface GetContentArgs {
@@ -44,13 +45,16 @@ export type sortDirection = 'asc' | 'desc';
 function ContentoClient({
     baseUrl,
     headers,
+    fetchOptions,
 }: {
     baseUrl: string;
     headers: Headers;
+    fetchOptions: object;
 }): ContentoClient {
     async function get(url: string) {
         try {
             const response = await fetch(url, {
+                ...fetchOptions,
                 method: 'GET',
                 headers,
             });
@@ -175,6 +179,7 @@ export function createContentoClient({
     apiURL,
     siteId,
     isPreview = false,
+    fetchOptions = {},
 }: ContentoClientConfig) {
     const headers = new Headers({
         'Content-Type': 'application/json',
@@ -188,5 +193,6 @@ export function createContentoClient({
     return ContentoClient({
         baseUrl: apiURL,
         headers,
+        fetchOptions,
     });
 }
