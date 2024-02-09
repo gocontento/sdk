@@ -1,13 +1,22 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter as usePagesRouter } from 'next/router';
 import { useRouter } from 'next/navigation';
-export function usePreviewBridge(draftMode: boolean) {
+
+function isInIframe() {
+    if (typeof window === 'undefined') {
+        return false;
+    }
+    return window.self !== window.top;
+}
+
+export function usePreviewBridge(draftMode: boolean): boolean {
+    const [showPreviewToolbar, setShowPreviewToolbar] = useState(false);
+
     // only run client side and in draft mode
     if (typeof window === 'undefined' || !draftMode) {
-        return;
+        return showPreviewToolbar;
     }
-
     function emitLoadedEvent() {
         if (window?.top) {
             window.top.postMessage('loaded', '*');
@@ -16,7 +25,7 @@ export function usePreviewBridge(draftMode: boolean) {
 
     let refresh: () => void;
 
-    // use correct router to refresh depening on if next is
+    // use correct router to refresh depending on if next is
     // using app router or pages router
     try {
         const router = usePagesRouter();
@@ -34,12 +43,23 @@ export function usePreviewBridge(draftMode: boolean) {
         refresh();
     }
 
+    function onMessage(event: MessageEvent) {
+        switch (event.data.message) {
+            case 'contento-refresh-preview':
+                refreshPreview(event);
+        }
+    }
+
     useEffect(() => {
         emitLoadedEvent();
-        window.addEventListener('message', refreshPreview);
+        setShowPreviewToolbar(!isInIframe());
+        window.addEventListener('message', onMessage);
+
         // remove event listeners on cleanup
         return () => {
             window.removeEventListener('message', refreshPreview);
         };
     }, []);
+
+    return showPreviewToolbar;
 }
