@@ -35,7 +35,7 @@ const CloseBtnContainer = styled.span`
 
 export function PreviewBridge({
     draftMode,
-    exitDraftModeUrl = '/api/disable-draf',
+    exitDraftModeUrl = '/api/disable-draft',
 }: PreviewBridgeProps) {
     const showPreviewToolbar = usePreviewBridge(draftMode);
     return draftMode && showPreviewToolbar ? (
