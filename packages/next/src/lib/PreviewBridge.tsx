@@ -9,6 +9,9 @@ interface PreviewBridgeProps {
 }
 
 const PreviewToolbar = styled.a`
+    font-size: 16px;
+    color: #000;
+    font-family: Inter, sans-serif;
     position: fixed;
     bottom: 10px;
     left: 10px;
