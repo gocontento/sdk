@@ -40,7 +40,7 @@ export function PreviewBridge({
     draftMode,
     exitDraftModeUrl = '/api/disable-draft',
 }: PreviewBridgeProps) {
-    const showPreviewToolbar = usePreviewBridge(draftMode);
+    const showPreviewToolbar = usePreviewBridge();
     return draftMode && showPreviewToolbar ? (
         <PreviewToolbar href={exitDraftModeUrl}>
             <svg
