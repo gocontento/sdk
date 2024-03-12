@@ -10,11 +10,11 @@ function isInIframe() {
     return window.self !== window.top;
 }
 
-export function usePreviewBridge(draftMode: boolean): boolean {
+export function usePreviewBridge(): boolean {
     const [showPreviewToolbar, setShowPreviewToolbar] = useState(false);
 
-    // only run client side and in draft mode
-    if (typeof window === 'undefined' || !draftMode) {
+    // only run client side
+    if (typeof window === 'undefined') {
         return showPreviewToolbar;
     }
     function emitLoadedEvent() {
