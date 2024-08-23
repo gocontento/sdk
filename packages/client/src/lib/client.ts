@@ -5,6 +5,7 @@ interface ContentoClientConfig {
     apiURL: string;
     siteId: string;
     isPreview: boolean;
+    language?: string;
     fetchOptions?: object;
 }
 
@@ -179,6 +180,7 @@ export function createContentoClient({
     apiURL,
     siteId,
     isPreview = false,
+    language,
     fetchOptions = {},
 }: ContentoClientConfig) {
     const headers = new Headers({
@@ -188,6 +190,9 @@ export function createContentoClient({
     });
     if (isPreview) {
         headers.append('X-CONTENTO-PREVIEW', 'true');
+    }
+    if (language) {
+        headers.append('X-CONTENTO-LANGUAGE', language);
     }
 
     return ContentoClient({
