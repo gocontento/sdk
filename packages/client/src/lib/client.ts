@@ -5,7 +5,8 @@ interface ContentoClientConfig {
     apiURL: string;
     siteId: string;
     isPreview: boolean;
-    fetchOptions?: object;
+    language?: string | undefined;
+    fetchOptions?: RequestInit | undefined;
 }
 
 interface GetContentArgs {
@@ -49,10 +50,18 @@ function ContentoClient({
 }: {
     baseUrl: string;
     headers: Headers;
-    fetchOptions: object;
+    fetchOptions: RequestInit;
 }): ContentoClient {
     async function get(url: string) {
         try {
+            // Merge in any headers passed through in fetchOptions - we use
+            // Headers.set() here to allow overrides
+            if (fetchOptions.headers) {
+                Object.entries(fetchOptions.headers).forEach((header) => {
+                    headers.set(header[0], header[1]);
+                });
+            }
+
             const response = await fetch(url, {
                 ...fetchOptions,
                 method: 'GET',
@@ -145,6 +154,7 @@ function ContentoClient({
         const contentResponse: ContentAPIResponse = await getContent({
             params,
         });
+
         return contentResponse.content[0];
     }
 
@@ -163,6 +173,7 @@ function ContentoClient({
             sort: `${sortBy}:${sortDirection}`,
             limit: limit.toString(),
         };
+
         return getContent({ params });
     }
 
@@ -179,6 +190,7 @@ export function createContentoClient({
     apiURL,
     siteId,
     isPreview = false,
+    language,
     fetchOptions = {},
 }: ContentoClientConfig) {
     const headers = new Headers({
@@ -186,8 +198,13 @@ export function createContentoClient({
         Authorization: 'Bearer ' + apiKey,
         'X-CONTENTO-SITE': siteId,
     });
+
     if (isPreview) {
-        headers.append('X-CONTENTO-PREVIEW', 'true');
+        headers.set('X-CONTENTO-PREVIEW', 'true');
+    }
+
+    if (language) {
+        headers.set('X-CONTENTO-LANGUAGE', language);
     }
 
     return ContentoClient({
