@@ -6,8 +6,7 @@
         "type": "git",
         "url": "https://github.com/gocontento/sdk/tree/main/packages/next"
     },
-  "dependencies": {
-  },
+  "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",
   "typings": "./index.d.ts"
