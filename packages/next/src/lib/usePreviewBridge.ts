@@ -17,6 +17,7 @@ export function usePreviewBridge(): boolean {
     if (typeof window === 'undefined') {
         return showPreviewToolbar;
     }
+
     function emitLoadedEvent() {
         if (window?.top) {
             window.top.postMessage('loaded', '*');
@@ -29,11 +30,16 @@ export function usePreviewBridge(): boolean {
     // using app router or pages router
     try {
         const router = usePagesRouter();
-        refresh = () =>
+        refresh = () => {
             router.replace(router.asPath, undefined, { scroll: false });
+            emitLoadedEvent();
+        };
     } catch {
         const router = useRouter();
-        refresh = () => router.refresh();
+        refresh = () => {
+            router.refresh();
+            emitLoadedEvent();
+        };
     }
 
     function refreshPreview(event: MessageEvent) {
