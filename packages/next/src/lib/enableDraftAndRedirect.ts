@@ -1,3 +1,5 @@
+'use server';
+
 import type { ContentoClient } from '@client';
 import { draftMode } from 'next/headers';
 import { redirect } from 'next/navigation';
