@@ -1,7 +1,7 @@
 {
   "name": "@gocontento/client",
   "version": "0.0.12",
-  "description": "Javascript client for Contento.io",
+  "description": "Core JavaScript SDK for Contento",
   "repository": {
     "type": "git",
     "url": "https://github.com/gocontento/sdk/tree/main/packages/client"
