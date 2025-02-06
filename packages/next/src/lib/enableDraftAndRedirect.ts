@@ -1,7 +1,7 @@
 'use server';
 
 import type { ContentoClient } from '@client';
-import { draftMode } from 'next/headers';
+import { cookies, draftMode } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function enableDraftAndRedirect(
@@ -31,6 +31,19 @@ export async function enableDraftAndRedirect(
 
     draftMode().enable();
 
+    // Fix the __prerender_bypass cookie - see https://github.com/vercel/next.js/issues/49927
+    const draft = cookies().get('__prerender_bypass');
+    const draftValue = draft?.value;
+    if (draftValue) {
+        cookies().set({
+            name: '__prerender_bypass',
+            value: draftValue,
+            httpOnly: true,
+            path: '/',
+            secure: true,
+            sameSite: 'none',
+        });
+    }
     // Redirect to the path from the fetched post
     // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
     redirect(`/${content.uri}`);
