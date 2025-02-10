@@ -63,7 +63,7 @@ export function usePreviewBridge(): boolean {
 
         // remove event listeners on cleanup
         return () => {
-            window.removeEventListener('message', refreshPreview);
+            window.removeEventListener('message', onMessage);
         };
     }, []);
 
