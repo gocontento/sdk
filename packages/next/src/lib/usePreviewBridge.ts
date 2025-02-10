@@ -42,17 +42,10 @@ export function usePreviewBridge(): boolean {
         };
     }
 
-    function refreshPreview(event: MessageEvent) {
-        if (event.data.message !== 'contento-refresh-preview') {
-            return;
-        }
-        refresh();
-    }
-
     function onMessage(event: MessageEvent) {
         switch (event.data.message) {
             case 'contento-refresh-preview':
-                refreshPreview(event);
+                refresh();
         }
     }
 
