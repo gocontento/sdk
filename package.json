@@ -6,8 +6,8 @@
         "packages/*"
     ],
     "scripts": {
-        "build-on-change": "nx watch --all --verbose -- nx run \\$NX_PROJECT_NAME:build",
-        "build-all": "nx run-many -t build",
+        "dev": "nx watch --all --verbose -- nx run \\$NX_PROJECT_NAME:build",
+        "build": "nx run-many -t build",
         "publish:client": "cd dist/client && npm publish --access public",
         "publish:next": "cd dist/next && npm publish --access public"
     },

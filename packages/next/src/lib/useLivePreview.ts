@@ -8,6 +8,7 @@ export function useLivePreview({
 }) {
     const [content, setContentValue] = useState(initialContent);
 
+    // Only run client side
     if (typeof window === 'undefined') {
         return { content };
     }
@@ -37,12 +38,12 @@ export function useLivePreview({
     }
 
     useEffect(() => {
-        // send message from contento preview iframe indicating
+        // Send message from Contento preview iframe indicating
         // that live preview is ready
         emitLivePreviewInitMessage();
         window.addEventListener('message', onMessage);
 
-        // remove event listeners on cleanup
+        // Remove event listeners on cleanup
         return () => {
             window.removeEventListener('message', onMessage);
         };

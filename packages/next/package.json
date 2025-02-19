@@ -1,13 +1,12 @@
 {
   "name": "@gocontento/next",
-  "version": "0.0.14",
-    "description": "Helpers for integrating Next.js sites with Contento.io",
+  "version": "0.0.16",
+    "description": "Next.js SDK for Contento",
     "repository": {
         "type": "git",
         "url": "https://github.com/gocontento/sdk/tree/main/packages/next"
     },
-  "dependencies": {
-  },
+  "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",
   "typings": "./index.d.ts"

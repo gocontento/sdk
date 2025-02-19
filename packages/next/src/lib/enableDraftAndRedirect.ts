@@ -1,5 +1,7 @@
+'use server';
+
 import type { ContentoClient } from '@client';
-import { draftMode } from 'next/headers';
+import { cookies, draftMode } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function enableDraftAndRedirect(
@@ -7,10 +9,7 @@ export async function enableDraftAndRedirect(
     request: Request,
     secret: string
 ) {
-    // Check the secret and next parameters.
-    // This secret should only be known to this API route and the CMS
-
-    // Parse query string parameters
+    // Parse query string parameters and fail if things don’t line up
     const { searchParams } = new URL(request.url);
     const secretParam = searchParams.get('secret');
     const id = searchParams.get('id');
@@ -18,18 +17,31 @@ export async function enableDraftAndRedirect(
         return new Response('Invalid token', { status: 401 });
     }
 
-    // Fetch the headless CMS to check if the provided `slug` exists
-    // getPostBySlug would implement the required fetching logic to the headless CMS
+    // Fetch from Contento to check if the provided content ID exists
     const content = await client.getContentById(id);
 
-    // If the slug doesn't exist prevent draft mode from being enabled
+    // If the content doesn't exist prevent draft mode from being enabled
     if (!content) {
         return new Response('Invalid slug', { status: 401 });
     }
 
+    // Enable Next.js draft mode
     draftMode().enable();
 
-    // Redirect to the path from the fetched post
-    // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
+    // Manually set the __prerender_bypass cookie - see https://github.com/vercel/next.js/issues/49927
+    const draft = cookies().get('__prerender_bypass');
+    const draftValue = draft?.value;
+    if (draftValue) {
+        cookies().set({
+            name: '__prerender_bypass',
+            value: draftValue,
+            httpOnly: true,
+            path: '/',
+            secure: true,
+            sameSite: 'none',
+        });
+    }
+
+    // Redirect to the URI from the fetched content
     redirect(`/${content.uri}`);
 }
