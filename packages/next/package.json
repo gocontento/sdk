@@ -1,6 +1,6 @@
 {
   "name": "@gocontento/next",
-  "version": "0.0.15",
+  "version": "0.0.16",
     "description": "Next.js SDK for Contento",
     "repository": {
         "type": "git",
