@@ -18,7 +18,7 @@ export type AssetData = {
 export type BlockData = {
     name: string;
     sort: number;
-    fields: any;
+    fields: Record<string, FieldData>;
     content_type: ContentTypeData;
 };
 export type ContentData = {
@@ -33,7 +33,7 @@ export type ContentData = {
     author: UserData;
     content_type: ContentTypeData;
     seo: SeoData;
-    fields: any;
+    fields: Record<string, FieldData>;
 };
 export type ContentLinkData = {
     id: string;
@@ -42,13 +42,21 @@ export type ContentLinkData = {
     slug: string | null;
     uri: string | null;
     url: string | null;
-    fields: any | null;
+    fields: Record<string, FieldData>;
 };
 export type ContentTypeData = {
     id: string;
     name: string;
     handle: string;
     object_type: string;
+};
+export type SelectedDropdownOption = {
+    label: string;
+    value: string;
+};
+export type ListItem = {
+    sort: number;
+    text: string | null;
 };
 export type FieldData = {
     id: string;
@@ -57,14 +65,25 @@ export type FieldData = {
     help_text: string | null;
     type: string;
     text: any | string | null;
-    assets: any | Array<any>;
-    blocks: any | Array<any>;
-    content_links: any | Array<any>;
+    assets:
+        | Array<{
+              sort: number;
+              asset: AssetData;
+          }>
+        | any;
+    blocks: BlockData[] | any;
+    content_links:
+        | Array<string>
+        | Array<{
+              sort: number;
+              content_link: ContentLinkData;
+          }>
+        | any;
     date: any | string | null;
     number: any | string | number | null;
-    list: any | Array<any>;
+    list: ListItem[] | any;
     is_on: any | boolean | null;
-    selected_option: any | Array<any>;
+    selected_option: SelectedDropdownOption | any;
 };
 export type SeoData = {
     title: string | null;
