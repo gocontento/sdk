@@ -13,7 +13,7 @@ function isInIframe() {
 export function usePreviewBridge(): boolean {
     const [showPreviewToolbar, setShowPreviewToolbar] = useState(false);
 
-    // only run client side
+    // Only run client side
     if (typeof window === 'undefined') {
         return showPreviewToolbar;
     }
@@ -26,7 +26,7 @@ export function usePreviewBridge(): boolean {
 
     let refresh: () => void;
 
-    // use correct router to refresh depending on if next is
+    // Use correct router to refresh depending on if next is
     // using app router or pages router
     try {
         const router = usePagesRouter();
@@ -54,7 +54,7 @@ export function usePreviewBridge(): boolean {
         setShowPreviewToolbar(!isInIframe());
         window.addEventListener('message', onMessage);
 
-        // remove event listeners on cleanup
+        // Remove event listeners on cleanup
         return () => {
             window.removeEventListener('message', onMessage);
         };
