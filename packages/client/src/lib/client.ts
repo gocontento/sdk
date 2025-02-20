@@ -38,6 +38,7 @@ export interface ContentoClient {
 export interface ContentAPIResponse {
     content: ContentData[];
     nextPage?: () => Promise<ContentAPIResponse>;
+    prevPage?: () => Promise<ContentAPIResponse>;
 }
 
 export type sortBy = 'published_at' | 'created_at' | 'updated_at' | 'name';
@@ -115,9 +116,8 @@ function ContentoClient({
             `${baseUrl}/content?${new URLSearchParams(processParams(params))}`
         );
 
-        // the content endpoint can return an array (in form json.data) if more than one item returned, or single object (just json)
-        // if the request return only one item.
-        // We will normalise this to always return an array
+        // The content endpoint can return an array (in form json.data) if more than one item returned, or single object
+        // if the request returns only one item. We will normalise this to always return an array.
         if (!json.data) {
             return {
                 content: [json],
@@ -128,12 +128,22 @@ function ContentoClient({
             content: json.data,
         };
 
-        if (json.links.next) {
+        if (json.meta.next_cursor) {
             result.nextPage = async () =>
                 getContent({
                     params: {
                         ...params,
                         cursor: json.meta.next_cursor,
+                    },
+                });
+        }
+
+        if (json.meta.prev_cursor) {
+            result.prevPage = async () =>
+                getContent({
+                    params: {
+                        ...params,
+                        cursor: json.meta.prev_cursor,
                     },
                 });
         }
