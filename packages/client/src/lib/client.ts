@@ -37,7 +37,7 @@ export interface ContentoClient {
 
 export interface ContentAPIResponse {
     content: ContentData[];
-    nextPage?: any;
+    nextPage?: () => Promise<ContentAPIResponse>;
 }
 
 export type sortBy = 'published_at' | 'created_at' | 'updated_at' | 'name';
