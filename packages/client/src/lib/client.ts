@@ -4,7 +4,8 @@ interface ContentoClientConfig {
     apiKey: string;
     apiURL: string;
     siteId: string;
-    isPreview: boolean;
+    isPreview?: boolean;
+    simplePagination?: boolean;
     language?: string | undefined;
     fetchOptions?: RequestInit | undefined;
 }
@@ -37,7 +38,16 @@ export interface ContentoClient {
 
 export interface ContentAPIResponse {
     content: ContentData[];
-    nextPage?: any;
+    nextPage?: () => Promise<ContentAPIResponse>;
+    prevPage?: () => Promise<ContentAPIResponse>;
+    pagination?: SimplePaginationResponse;
+}
+
+export interface SimplePaginationResponse {
+    first: Record<string, string | string[]> | null;
+    last: Record<string, string | string[]> | null;
+    prev: Record<string, string | string[]> | null;
+    next: Record<string, string | string[]> | null;
 }
 
 export type sortBy = 'published_at' | 'created_at' | 'updated_at' | 'name';
@@ -115,9 +125,8 @@ function ContentoClient({
             `${baseUrl}/content?${new URLSearchParams(processParams(params))}`
         );
 
-        // the content endpoint can return an array (in form json.data) if more than one item returned, or single object (just json)
-        // if the request return only one item.
-        // We will normalise this to always return an array
+        // The content endpoint can return an array (in form json.data) if more than one item returned, or single object
+        // if the request returns only one item. We will normalise this to always return an array.
         if (!json.data) {
             return {
                 content: [json],
@@ -128,14 +137,87 @@ function ContentoClient({
             content: json.data,
         };
 
-        if (json.links.next) {
-            result.nextPage = async () =>
-                getContent({
-                    params: {
-                        ...params,
-                        cursor: json.meta.next_cursor,
-                    },
-                });
+        // Check the headers to see if we’re dealing with cursor or simple / classic pagination
+        const simplePaginationHeader = headers.get(
+            'X-CONTENTO-SIMPLE-PAGINATION'
+        );
+
+        // Process simple pagination response
+        if (simplePaginationHeader && simplePaginationHeader === 'true') {
+            // For this style of pagination we figure out the complete set of params including the page number from the
+            // links array - we do this for all 4 potential links, and then send back params objects for those as well
+            // as setting the convenience methods
+            result.pagination = {
+                first: json.links.first
+                    ? {
+                          ...params,
+                          page: new URL(json.links.first).searchParams.get(
+                              'page'
+                          ) as string,
+                      }
+                    : null,
+                last: json.links.last
+                    ? {
+                          ...params,
+                          page: new URL(json.links.last).searchParams.get(
+                              'page'
+                          ) as string,
+                      }
+                    : null,
+                prev: json.links.prev
+                    ? {
+                          ...params,
+                          page: new URL(json.links.prev).searchParams.get(
+                              'page'
+                          ) as string,
+                      }
+                    : null,
+                next: json.links.next
+                    ? {
+                          ...params,
+                          page: new URL(json.links.next).searchParams.get(
+                              'page'
+                          ) as string,
+                      }
+                    : null,
+            } as SimplePaginationResponse;
+
+            const { next } = result.pagination;
+            if (next) {
+                result.nextPage = async () =>
+                    getContent({
+                        params: next,
+                    });
+            }
+
+            const { prev } = result.pagination;
+            if (prev) {
+                result.prevPage = async () =>
+                    getContent({
+                        params: prev,
+                    });
+            }
+        } else {
+            // Process the default cursor based pagination
+            if (json.meta.next_cursor) {
+                result.nextPage = async () =>
+                    getContent({
+                        params: {
+                            ...params,
+                            cursor: json.meta.next_cursor,
+                        },
+                    });
+            }
+
+            if (json.meta.prev_cursor) {
+                result.prevPage = async () =>
+                    getContent({
+                        params: {
+                            ...params,
+                            cursor: json.meta.prev_cursor,
+                        },
+                    });
+            }
         }
 
         return result;
@@ -190,6 +272,7 @@ export function createContentoClient({
     apiURL,
     siteId,
     isPreview = false,
+    simplePagination = false,
     language,
     fetchOptions = {},
 }: ContentoClientConfig) {
@@ -201,6 +284,10 @@ export function createContentoClient({
 
     if (isPreview) {
         headers.set('X-CONTENTO-PREVIEW', 'true');
+    }
+
+    if (simplePagination) {
+        headers.set('X-CONTENTO-SIMPLE-PAGINATION', 'true');
     }
 
     if (language) {
