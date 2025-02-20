@@ -4,7 +4,7 @@ interface ContentoClientConfig {
     apiKey: string;
     apiURL: string;
     siteId: string;
-    isPreview: boolean;
+    isPreview?: boolean;
     language?: string | undefined;
     fetchOptions?: RequestInit | undefined;
 }
