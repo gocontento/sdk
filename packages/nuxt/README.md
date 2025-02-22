@@ -1,0 +1,2 @@
+# Nuxt toolkit for Contento
+
