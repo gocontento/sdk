@@ -6,6 +6,7 @@ import dts from 'vite-plugin-dts';
 import * as path from 'path';
 
 export default defineConfig({
+    root: __dirname,
     cacheDir: '../node_modules/.vite/client',
 
     plugins: [
@@ -26,6 +27,9 @@ export default defineConfig({
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
+        outDir: '../../dist/client',
+        reportCompressedSize: true,
+        commonjsOptions: { transformMixedEsModules: true },
         sourcemap: true,
         minify: false,
         lib: {
@@ -44,6 +48,11 @@ export default defineConfig({
     },
 
     test: {
+        reporters: ['default'],
+        coverage: {
+            reportsDirectory: '../coverage/client',
+            provider: 'v8',
+        },
         globals: true,
         cache: {
             dir: '../node_modules/.vitest',
