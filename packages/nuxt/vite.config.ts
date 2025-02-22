@@ -59,9 +59,11 @@ export default defineConfig({
             external: [
                 'vue',
                 'nuxt',
+                'h3',
                 // exclude sub packages too
                 /^nuxt\//,
                 /^vue\//,
+                /^h3\//,
             ],
             output: {
                 preserveModules: true,
