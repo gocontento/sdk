@@ -1,13 +1,13 @@
 {
-  "name": "@gocontento/nuxt",
-  "version": "0.0.1",
+    "name": "@gocontento/nuxt",
+    "version": "0.0.1",
     "description": "Nuxt SDK for Contento",
     "repository": {
         "type": "git",
         "url": "https://github.com/gocontento/sdk/tree/main/packages/nuxt"
     },
-  "dependencies": {},
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "typings": "./index.d.ts"
+    "dependencies": {},
+    "main": "./index.js",
+    "module": "./index.mjs",
+    "typings": "./index.d.ts"
 }
