@@ -26,13 +26,15 @@ export async function enableDraftAndRedirect(
     }
 
     // Enable Next.js draft mode
-    draftMode().enable();
+    const draft = await draftMode();
+    draft.enable();
 
     // Manually set the __prerender_bypass cookie - see https://github.com/vercel/next.js/issues/49927
-    const draft = cookies().get('__prerender_bypass');
-    const draftValue = draft?.value;
+    const cookie = await cookies();
+    const draftCookie = cookie.get('__prerender_bypass');
+    const draftValue = draftCookie?.value;
     if (draftValue) {
-        cookies().set({
+        cookie.set({
             name: '__prerender_bypass',
             value: draftValue,
             httpOnly: true,
