@@ -7,6 +7,7 @@ import * as path from 'path';
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 
 export default defineConfig({
+    root: __dirname,
     cacheDir: '../../node_modules/.vite/next',
 
     plugins: [
@@ -27,6 +28,9 @@ export default defineConfig({
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
+        outDir: '../../dist/next',
+        reportCompressedSize: true,
+        commonjsOptions: { transformMixedEsModules: true },
         sourcemap: true,
         lib: {
             // Could also be a dictionary or array of multiple entry points.

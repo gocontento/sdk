@@ -6,7 +6,6 @@ In due course we will also be adding helpers for our first-party SEO tool and As
 
 Please note that this package currently supports Next.js 13 projects using the [App Router](https://nextjs.org/docs/app).
 
-
 ## Installation
 
 ```bash
@@ -16,9 +15,6 @@ npm install @gocontento/next
 ## Documentation
 
 For full documentation please go to [https://www.contento.io/docs/sdk/next](https://www.contento.io/docs/sdk/next).
-
-
-
 
 ## Support
 

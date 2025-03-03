@@ -5,7 +5,7 @@ Libraries and tools to help build websites with Contento.
 ## Get Started
 
 We currently offer first class support, including Visual Preview, for Next.js applications. To get started with Next.js
-see our [Next.js toolkit](https://www.contento.io/docs/sdk/next). 
+see our [Next.js toolkit](https://www.contento.io/docs/sdk/next).
 
 More integrations are coming soon.
 
