@@ -18,6 +18,7 @@
         "baseUrl": ".",
         "paths": {
             "@client": ["packages/client/src/index.ts"],
+            "@gocontento/nuxt": ["packages/nuxt/src/index.ts"],
             "@next": ["packages/next/src/index.ts"],
             "@nuxt": ["packages/nuxt/src/index.ts"]
         }

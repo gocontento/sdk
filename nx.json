@@ -17,6 +17,11 @@
         "@nx/vite:test": {
             "inputs": ["default", "^production"],
             "cache": true
+        },
+        "@nx/vite:build": {
+            "cache": true,
+            "dependsOn": ["^build"],
+            "inputs": ["production", "^production"]
         }
     },
     "namedInputs": {
@@ -25,7 +30,8 @@
             "default",
             "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
             "!{projectRoot}/tsconfig.spec.json",
-            "!{projectRoot}/.eslintrc.json"
+            "!{projectRoot}/.eslintrc.json",
+            "!{projectRoot}/src/test-setup.[jt]s"
         ],
         "sharedGlobals": []
     },
