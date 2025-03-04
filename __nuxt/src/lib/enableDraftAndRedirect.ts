@@ -1,4 +1,4 @@
-import { createContentoClient } from '@client';
+import { createContentoClient } from 'packages/client/src';
 import { createError, getQuery, H3Event } from 'h3';
 import jwt from 'jsonwebtoken';
 import type { RuntimeConfig } from 'nuxt/schema';
