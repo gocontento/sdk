@@ -18,8 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@client": ["packages/client/src/index.ts"],
-      "@next": ["packages/next/src/index.ts"],
-      "@nuxt": ["packages/nuxt/src/module.ts"]
+      "@next": ["packages/next/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

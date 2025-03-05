@@ -1,13 +1,20 @@
 {
-    "name": "@gocontento/client",
-    "version": "0.0.14",
-    "description": "Core JavaScript SDK for Contento",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/gocontento/sdk/tree/main/packages/client"
-    },
-    "dependencies": {},
-    "main": "./index.js",
-    "module": "./index.mjs",
-    "typings": "./index.d.ts"
+  "name": "@gocontento/client",
+  "version": "0.0.15",
+  "description": "Core JavaScript SDK for Contento",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gocontento/sdk/tree/main/packages/client"
+  },
+  "dependencies": {},
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  }
 }

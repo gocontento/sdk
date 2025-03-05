@@ -82,7 +82,15 @@ declare module 'nuxt/schema' {
    },
   }
   interface PublicRuntimeConfig {
+   contento: {
+      apiUrl: string,
 
+      apiKey: string,
+
+      siteId: string,
+
+      previewSecret: string,
+   },
   }
 }
 declare module 'vue' {

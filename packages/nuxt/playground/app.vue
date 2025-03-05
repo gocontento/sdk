@@ -1,8 +1,10 @@
-<template>
-  <div>
-    Nuxt module playground!
-  </div>
-</template>
+<script setup lang="ts">
+import { useContentoClient } from '#imports'
 
-<script setup>
+const client = await useContentoClient()
+console.log(client)
 </script>
+
+<template>
+  <div>Nuxt module playground!</div>
+</template>

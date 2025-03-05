@@ -1,4 +1,10 @@
-import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
+import {
+  defineNuxtModule,
+  addPlugin,
+  createResolver,
+  addImportsDir,
+  addImports,
+} from '@nuxt/kit'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -20,12 +26,46 @@ export default defineNuxtModule<ModuleOptions>({
     siteId: '',
     previewSecret: '',
   },
-  setup(_options, _nuxt) {
+  setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    console.log('main module setup function')
+    if (nuxt.options.vite.optimizeDeps) {
+      nuxt.options.vite.optimizeDeps.include =
+        nuxt.options.vite.optimizeDeps.include || []
+      nuxt.options.vite.optimizeDeps.include.push('@gocontento/client')
+    }
 
-    // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
+    // Add auto imports
+    const names = ['createContentoClient', 'ContentoClient']
+    for (const name of names) {
+      addImports({ name, as: name, from: '@gocontento/client' })
+    }
+
+    nuxt.options.typescript.hoist.push('@gocontento/client')
+
+    // Set the options on the runtimeConfig
+    nuxt.options.runtimeConfig.public.contento = {
+      ...options,
+    }
+
+    // Plugin
     addPlugin(resolver.resolve('./runtime/plugin'))
+
+    // Composables
+    addImportsDir(resolver.resolve('./runtime/composables'))
+    //
+    // // Routes
+    // addServerHandler({
+    //   route: '/api/draft',
+    //   handler: resolver.resolve('./runtime/server/api/draft.get'),
+    // });
+    //
+    // // Components
+    // // From the runtime directory
+    // // addComponent({
+    // //     name: 'MySuperComponent', // name of the component to be used in vue templates
+    // //     export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+    // //     filePath: resolver.resolve('runtime/components/MySuperComponent.vue')
+    // // })
   },
 })
