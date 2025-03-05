@@ -1,0 +1,1 @@
+export { default } from "/Users/joshangell/Documents/sdk/node_modules/nuxt/dist/app/components/nuxt-root.vue";
