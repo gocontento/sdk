@@ -14,9 +14,9 @@ export default defineConfig({
         nxViteTsPaths(),
         nxCopyAssetsPlugin([
             {
-                input: './src/runtime', // look in the src folder
-                glob: '**/*.ts', // for any file (in any folder) that is not a typescript file
-                output: './runtime', // put those files in the src folder of the output bundle
+                input: './src/runtime',
+                glob: '**/*.ts',
+                output: './runtime',
             },
         ]),
         dts({
@@ -36,9 +36,16 @@ export default defineConfig({
         sourcemap: true,
         lib: {
             // Could also be a dictionary or array of multiple entry points.
-            entry: ['src/index.ts', 'src/module.ts'],
+            entry: [
+                'src/index.ts',
+                'src/module.ts',
+                'src/runtime/plugin.ts',
+                'src/runtime/composables/useContentoClient.ts',
+            ],
             name: 'nuxt',
             fileName: (format, entry) => {
+                // TODO: this kinda works, but should we just figure out how to use the real nuxt module builder?
+                // return `${entry.replace('src/', '').replace('.ts', '')}.js`;
                 const name = entry.split('/').pop();
                 switch (format) {
                     case 'es': {

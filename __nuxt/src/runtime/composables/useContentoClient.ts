@@ -1,8 +1,8 @@
 import { ContentoClient, createContentoClient } from '../../index';
 import { ContentoRuntimeConfig } from '../../module';
 
-// @ts-ignore
-import { useRuntimeConfig } from '#imports'; // <-- important, only way we can import it here, see https://github.com/nuxt/nuxt/discussions/16137#discussioncomment-6838967
+import { useRuntimeConfig } from 'nuxt/app';
+// <-- important, only way we can import it here, see https://github.com/nuxt/nuxt/discussions/16137#discussioncomment-6838967
 
 export const useContentoClient = async (): Promise<ContentoClient> => {
     // Get our runtimeConfig options
