@@ -1,10 +1,10 @@
 # Next.js toolkit for Contento
 
-This package primarily allows you to integrate with the Content visual preview in your Next.js project.
+This package primarily allows you to integrate with the Contento visual preview in your Next.js project.
 
 In due course we will also be adding helpers for our first-party SEO tool and Assets.
 
-Please note that this package currently supports Next.js 13 projects using the [App Router](https://nextjs.org/docs/app).
+Please note that this package currently supports Next.js 15 projects using the [App Router](https://nextjs.org/docs/app).
 
 ## Installation
 
